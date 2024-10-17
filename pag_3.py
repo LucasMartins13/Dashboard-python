@@ -4,23 +4,18 @@ import numpy as np
 import yfinance as yf
 
 st.title("Gráfico de Linhas")
-lista_acoes = st.sidebar.multiselect("Escolha as ações para visualizar", st.session_state.df.columns)
-if lista_acoes:
-    dados = st.session_state.df[lista_acoes]
-    if len(lista_acoes) == 1:
-        acao_unica = lista_acoes[0]
-        dados = dados.rename(columns={acao_unica: "Close"})
+@st.cache_data
+def filter_df(columns):
+    if columns:
+        return st.session_state.df[columns]
+    return st.session_state.df
 
-    data_inicial = dados.index.min().to_pydatetime()
-    data_final = dados.index.max().to_pydatetime()
-    intervalo_data = st.sidebar.slider(
-        "Selecione o período",
-        min_value=data_inicial,
-        max_value=data_final,
-        value=(data_inicial, data_final),
-        step=pd.Timedelta(days=1)
-    )
+data_columns = st.session_state.df.columns.tolist()
+selected_columns = st.sidebar.multiselect(
+    'Selecione as colunas para o gráfico:',
+    options=data_columns,
+    default=data_columns
+)
 
-    dados = dados.loc[intervalo_data[0]:intervalo_data[1]]
-
-    st.line_chart(dados)
+filtered_df = st.session_state.df[selected_columns]
+st.line_chart(filtered_df)
