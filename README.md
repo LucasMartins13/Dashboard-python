@@ -1,2 +1,2 @@
 # Dashboard-python
-Just a python dashboard
+Just a python dashboard with streamlit, pandas, numpy and yfinance.
